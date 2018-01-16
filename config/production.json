@@ -1,0 +1,11 @@
+{
+  "environment": "production",
+
+  "server": {
+    "logFormat": "combined"
+  },
+
+  "log": {
+    "level": "info"
+  }
+}
