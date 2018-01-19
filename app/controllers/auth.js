@@ -1,28 +1,42 @@
 const config = require('config');
 const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
+const googleAuth = require('../libraries/googleAuth');
 const AbstractController = require('.');
 
 module.exports = class AuthController extends AbstractController {
   initRouter() {
-    passport.use(new GoogleStrategy({
-      clientID: config.get('google.clientId'),
-      clientSecret: config.get('google.clientSecret'),
-      callbackURL: `${config.get('server.baseUrl')}${config.get('google.callbackUrl')}`,
-    }, (accessToken, refreshToken, profile, callback) => {
-      console.log(accessToken);
-      console.log(refreshToken);
-      console.log(profile);
+    passport.use(googleAuth.strategy);
 
-      callback(profile);
-    }));
-
-    this.router.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
-    this.router.get(config.get('google.callbackUrl'), passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => AuthController.handleLogged(req, res));
+    this.router.get('/auth/google', passport.authenticate('google', { scope: googleAuth.scopes }));
+    this.router.get(config.get('google.callbackUrl'), passport.authenticate('google', { failureRedirect: '/' }), (req, res) => AuthController.handleLogged(req, res));
   }
 
   static handleLogged(req, res) {
-    res.redirect('/');
+    res.json(req.user);
+  }
+
+  static checkAuthenticated(req, res, next) {
+    try {
+      const accessToken = req.headers.authorization.split('Bearer ')[1];
+
+      googleAuth.strategy.userProfile(accessToken, (error, profile) => {
+        if (error) {
+          next(error);
+
+          return;
+        }
+
+        req.user = googleAuth.createAuthObj(profile);
+
+        req.user = {
+          email: 'emanuele.seccia@thinkopen.it',
+        };
+
+        next();
+      });
+    } catch (error) {
+      next('User must authenticate');
+    }
   }
 };

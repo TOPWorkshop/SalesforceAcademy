@@ -4,6 +4,7 @@ const http = require('http');
 const morgan = require('morgan');
 const config = require('config');
 const express = require('express');
+const passport = require('passport');
 const bodyParser = require('body-parser');
 
 const log = require('./libraries/log');
@@ -42,6 +43,16 @@ module.exports = class App {
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
 
+    this.app.use(passport.initialize());
+
+    passport.serializeUser((user, callback) => {
+      callback(null, user);
+    });
+
+    passport.deserializeUser((obj, callback) => {
+      callback(null, obj);
+    });
+
     log.silly('Middlewares initialized');
   }
 
@@ -56,7 +67,7 @@ module.exports = class App {
         // eslint-disable-next-line global-require, import/no-dynamic-require
         const Controller = require(controllerFile);
 
-        this.app.use('/api', new Controller().router);
+        this.app.use('/', new Controller().router);
       });
 
     this.app.use(express.static(path.join(__dirname, '..', 'public')));

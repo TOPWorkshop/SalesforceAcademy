@@ -1,0 +1,8 @@
+{
+  "environment": "staging",
+
+  "server": {
+    "logFormat": "combined",
+    "baseUrl": "https://top-salesforce-academy.herokuapp.com"
+  }
+}
