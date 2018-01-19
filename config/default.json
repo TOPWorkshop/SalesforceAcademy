@@ -3,10 +3,17 @@
 
   "server": {
     "logFormat": "dev",
-    "port": 3000
+    "port": 3000,
+    "baseUrl": "https://top-salesforce-academy-staging.herokuapp.com"
   },
 
   "log": {
     "level": "silly"
+  },
+
+  "google": {
+    "clientId": "420447536301-kaf5q6gtkkb4v2fu7gnj9c16hmcvflbu.apps.googleusercontent.com",
+    "clientSecret": "",
+    "callbackUrl": "/auth/google/callback"
   }
 }

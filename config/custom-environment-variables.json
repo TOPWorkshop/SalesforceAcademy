@@ -1,5 +1,9 @@
 {
   "server": {
     "port": "PORT"
+  },
+
+  "google": {
+    "clientSecret": "GOOGLE_CLIENT_SECRET"
   }
 }
